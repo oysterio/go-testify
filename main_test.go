@@ -4,7 +4,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -18,26 +17,6 @@ func TestMainHandlerWhenOk(t *testing.T) {
 	responseRecorder := httptest.NewRecorder()
 	handler := http.HandlerFunc(MainHandle)
 	handler.ServeHTTP(responseRecorder, req)
-
-	// Request check
-	newRequire := require.New(t)
-	newRequire.Equal(http.MethodGet, req.Method, "Unexpected request method")
-	newRequire.Equal("/cafe", req.URL.Path, "Unexpected request url")
-
-	query := req.URL.Query()
-	reqCount, err := strconv.Atoi(query.Get("count"))
-	newAssert := assert.New(t)
-	// String to Int conversition check
-	newAssert.NoError(err, "Error when reading response")
-	reqCity := query.Get("city")
-	totalCount := 4
-	city := "moscow"
-
-	newRequire.NotNil(reqCount)
-	newRequire.NotNil(reqCity)
-	newRequire.Equal(totalCount, reqCount, "Unexpected cafe count at the city")
-	newRequire.Equal(city, reqCity, "Unexpected city name")
-
 	// Response check
 	require.Equal(t, http.StatusOK, responseRecorder.Code, "Expected status code is 200")
 	result := responseRecorder.Result()
